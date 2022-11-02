@@ -241,6 +241,13 @@ namespace AspectedRouting
             var includeTests = args.Contains("--include-tests");
             var runRepl = !args.Contains("--no-repl");
 
+            if (includeTests) {
+                Console.WriteLine("Including tests in the lua files");
+            }else
+            {
+                Console.WriteLine("Not including tests in the lua files; use --include-tests if you want to emit them too");
+            }
+
             if (!Directory.Exists(outputDir)) {
                 Directory.CreateDirectory(outputDir);
             }

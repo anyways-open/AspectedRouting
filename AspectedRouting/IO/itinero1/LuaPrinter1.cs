@@ -12,6 +12,7 @@ namespace AspectedRouting.IO.itinero1
         private readonly Context _context;
         private readonly List<AspectTestSuite> _aspectTestSuites;
         private readonly List<BehaviourTestSuite> _profileTests;
+        private readonly bool _includeTests;
         private readonly LuaSkeleton.LuaSkeleton _skeleton;
 
 
@@ -20,13 +21,15 @@ namespace AspectedRouting.IO.itinero1
 
         public LuaPrinter1(ProfileMetaData profile, Context context,
             List<AspectTestSuite> aspectTestSuites,
-            List<BehaviourTestSuite> profileTests)
+            List<BehaviourTestSuite> profileTests,
+            bool includeTests)
         {
             _profile = profile;
             _context = context;
             _aspectTestSuites = aspectTestSuites?.Where(suite => suite != null)
                 ?.Select(testSuite => testSuite.WithoutRelationTests())?.ToList();
             _profileTests = profileTests;
+            _includeTests = includeTests;
             _skeleton = new LuaSkeleton.LuaSkeleton(context, true);
             _parameterPrinter = new LuaParameterPrinter(profile, _skeleton);
         }
@@ -38,8 +41,12 @@ namespace AspectedRouting.IO.itinero1
             var (membershipFunction, extraKeys) = GenerateMembershipPreprocessor();
             var (profileOverview, behaviourFunctions) = GenerateProfileFunctions();
             var mainFunction = GenerateMainProfileFunction();
-            var tests = new LuaTestPrinter(_skeleton, new List<string> { "unitTest", "unitTestProfile" })
+            var tests = "";
+            if (_includeTests) {
+                
+             tests = new LuaTestPrinter(_skeleton, new List<string> { "unitTest", "unitTestProfile" })
                 .GenerateFullTestSuite(_profileTests, _aspectTestSuites);
+            }
 
 
             var keys = _profile.AllExpressions(_context).PossibleTags().Keys
@@ -134,6 +141,17 @@ namespace AspectedRouting.IO.itinero1
 
         private string GenerateLegacyTail()
         {
+
+            var testcode = "";
+            if (_includeTests) {
+            testcode = string.Join("\n",
+                "test_all()",
+                "if (not failed_tests and not failed_profile_tests) then",
+                "    print(\"Tests OK\")",
+                "else",
+                "    error(\"Some tests failed\")",
+                "end");
+            }
             return string.Join("\n",
                 "",
                 "if (itinero == nil) then",
@@ -148,12 +166,8 @@ namespace AspectedRouting.IO.itinero1
                 "    print = itinero.log",
                 "end",
                 "",
-                "test_all()",
-                "if (not failed_tests and not failed_profile_tests) then",
-                "    print(\"Tests OK\")",
-                "else",
-                "    error(\"Some tests failed\")",
-                "end"
+                testcode
+
             );
         }
     }

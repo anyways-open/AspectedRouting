@@ -73,7 +73,8 @@ namespace AspectedRouting
 
             var luaProfile = new LuaPrinter1(_profile, _context,
                 aspectTests,
-                _profileTests
+                _profileTests,
+                _includeTests
             ).ToLua();
 
             var itinero1ProfileFile = Path.Combine($"{_outputDirectory}/itinero1/" + _profile.Name + ".lua");
