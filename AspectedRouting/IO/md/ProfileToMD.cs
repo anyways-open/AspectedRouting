@@ -228,7 +228,7 @@ namespace AspectedRouting.IO.md
                 ["highway"] = "residential"
             };
 
-            var residentialTagsStr = string.Join(";", residentialTags.Select((k, v) => $"{k}={v}"));
+            var residentialTagsStr = string.Join(";", residentialTags.Select((kv) => $"{kv.Key}={kv.Value}"));
             md.Add("| Tags | Speed (km/h) | Priority",
                 "| ---- | ----- | ---------- | ",
                 TableEntry("Residential highway (reference)", residentialTags, null));
