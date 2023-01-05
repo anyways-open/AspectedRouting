@@ -223,7 +223,7 @@ namespace AspectedRouting.IO.md
             var reference = _profile.Run(_c, _behaviour, residentialTags);
             md.AddTitle("Tags influencing priority", 2);
             md.Add(
-                "Priority is what influences which road to take. The routeplanner will search a way where `1/priority` is minimal.");
+                "Priority is what influences which road to take. The routeplanner will search a way where `distance/priority` is minimal.");
             addTagsTable(reference, TagsWithPriorityInfluence().Values.PossibleTagsRecursive(_c));
 
             md.AddTitle("Tags influencing speed", 2);

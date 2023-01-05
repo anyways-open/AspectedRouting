@@ -120,10 +120,10 @@ namespace AspectedRouting
             return "[" + string.Join(",\n", metaItems) + "]";
         }
 
-        /**
-         * Parses an object, converts it to a double.
-         * throws an exception if not a double
-         */
+        ///<summary>
+        /// Parses an object, converts it to a double.
+        /// throws an exception if not a double
+        /// </summary>
         public static double AsDouble(object obj, string paramName)
         {
             if (obj == null)
