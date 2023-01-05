@@ -21,7 +21,7 @@ namespace AspectedRouting.Language
         public static readonly Function Inv = new Inv();
         public static readonly Function IsNull = new IsNull();
 
-        public static readonly Function Default = new Default();
+        public static readonly Default Default = new Default();
 
         public static readonly Function Parse = new Parse();
         public static readonly Function ToStringFunc = new ToString();

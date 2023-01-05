@@ -60,7 +60,7 @@ namespace AspectedRouting.IO.md
             }
         }
 
-        private decimal R(double d)
+        private static decimal R(double d)
         {
             return Math.Round((decimal)d, 2);
         }
@@ -68,7 +68,7 @@ namespace AspectedRouting.IO.md
         /**
          * Calculates an entry with `speed`, `priority` for the profile
          */
-        public string TableEntry(string msg, Dictionary<string, string> tags, ProfileResult? reference,
+        private string TableEntry(string msg, Dictionary<string, string> tags, ProfileResult? reference,
             bool nullOnSame = false)
         {
             var profile = _profile.Run(_c, _behaviour, tags);
@@ -88,7 +88,7 @@ namespace AspectedRouting.IO.md
                    profile.Access + " | " + profile.Oneway;
         }
 
-        public void addTagsTable(ProfileResult reference, Dictionary<string, HashSet<string>> usedTags)
+        private void AddTagsTable(ProfileResult reference, Dictionary<string, HashSet<string>> usedTags, string referenceTags)
         {
             var p = _profile;
             var b = _profile.Behaviours[_behaviour];
@@ -128,13 +128,24 @@ namespace AspectedRouting.IO.md
                     }
                 }
             }
+            md.Add("In the following table, you'll find:");
+            md.AddList(new List<string>()
+            {
+                "The single tag used to calculate the result as *Tags*",
+                "The *speed* that the vehicle would go if only these tags were present",
+                "The _speedfactor_, i.e. the ratio between the speed and the speed of a reference road (namely `"+referenceTags+"` which has a speed of *"+reference.Speed+"*)",
+                "The *priority* of this tag",
+                "The _priority-factor_, i.e. the ratio between the priority and the priority of a reference road (namely `"+referenceTags+"` which has a priority of *"+reference.Priority+"*)",
+                "The *access* for this vehicle. Many tags will influence speed or priority, but most will not have a special effect",
+                "The *oneway* status caused by the tags; the default is `both`"
 
-            md.Add("| Tags | Speed (km/h) | speedfactor | Priority | priorityfactor | access | oneway | ",
+            });
+            md.Add("| Tags | Speed (km/h) | speed/referencespeed | Priority | Priority/referencepriority | access | oneway | ",
                 "| ---- | ------------ | ----------- | -------- | --------------- | ----- | ------ |",
                 string.Join("\n", tableEntries));
         }
 
-        public Dictionary<string, IExpression> TagsWithPriorityInfluence()
+        private Dictionary<string, IExpression> TagsWithPriorityInfluence()
         {
 
             var p = _profile;
@@ -217,6 +228,7 @@ namespace AspectedRouting.IO.md
                 ["highway"] = "residential"
             };
 
+            var residentialTagsStr = string.Join(";", residentialTags.Select((k, v) => $"{k}={v}"));
             md.Add("| Tags | Speed (km/h) | Priority",
                 "| ---- | ----- | ---------- | ",
                 TableEntry("Residential highway (reference)", residentialTags, null));
@@ -224,19 +236,20 @@ namespace AspectedRouting.IO.md
             md.AddTitle("Tags influencing priority", 2);
             md.Add(
                 "Priority is what influences which road to take. The routeplanner will search a way where `distance/priority` is minimal.");
-            addTagsTable(reference, TagsWithPriorityInfluence().Values.PossibleTagsRecursive(_c));
+            AddTagsTable(reference, TagsWithPriorityInfluence().Values.PossibleTagsRecursive(_c), residentialTagsStr);
 
             md.AddTitle("Tags influencing speed", 2);
             md.Add(
                 "Speed is used to calculate how long the trip will take, but does _not_ influence which route is taken. Some profiles do use speed as a factor in priority too - in this case, these tags will be mentioned above too.");
-            addTagsTable(reference, _profile.Speed.PossibleTagsRecursive(_c));
+            AddTagsTable(reference, _profile.Speed.PossibleTagsRecursive(_c), residentialTagsStr);
 
             md.AddTitle("Tags influencing access", 2);
             md.Add("These tags influence whether or not this road can be taken with this vehicle or behaviour");
-            addTagsTable(reference, _profile.Access.PossibleTagsRecursive(_c));
+            AddTagsTable(reference, _profile.Access.PossibleTagsRecursive(_c), residentialTagsStr);
             md.AddTitle("Tags influencing oneway", 2);
             md.Add("These tags influence whether or not this road can be taken in all directions or not");
-            addTagsTable(reference, _profile.Oneway.PossibleTagsRecursive(_c));
+
+            AddTagsTable(reference, _profile.Oneway.PossibleTagsRecursive(_c), residentialTagsStr);
 
 
             return md.ToString();

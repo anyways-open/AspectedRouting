@@ -8,6 +8,7 @@ using AspectedRouting.IO.itinero2;
 using AspectedRouting.IO.md;
 using AspectedRouting.Language;
 using AspectedRouting.Language.Expression;
+using AspectedRouting.Language.Functions;
 using AspectedRouting.Tests;
 
 namespace AspectedRouting
@@ -113,6 +114,16 @@ namespace AspectedRouting
 
         public void PrintMdInfo()
         {
+            
+            /*
+             * As a total hack:
+             * the 'default value' is set to null for _all_ default functions.
+             * When the profile documentation thus default to `no` for an access tag, it'll default to nothing instead, thus making it clear that no change is made
+             */
+            Funcs.Default.OverwriteAllDefaultValues(new Constant("_no effect_"));
+            
+            
+            
             var profileMd = new MarkDownSection();
             profileMd.AddTitle(_profile.Name, 1);
 
@@ -144,6 +155,9 @@ namespace AspectedRouting
             File.WriteAllText(
                 $"{_outputDirectory}/profile-documentation/{_profile.Name}.md",
                 profileMd.ToString());
+            
+            Funcs.Default.ResetDefaultValue();
+
         }
     }
 }
