@@ -30,7 +30,7 @@ namespace AspectedRouting.Language.Functions
             "Usage example",
             "-------------",
             "",
-            "`\'mustMatchKeys\': { \"highway\": { \"proposed\": \"no\", \"undefined\":null }}`",
+            "`\'mustMatch\': { \"highway\": { \"proposed\": \"no\", \"undefined\":null }}`",
             "which will return 'yes' for {highway=residential}, {highway=living_street}, ..., but return 'no' for {highway=proposed}, but also for {some_other_key=xxx}",
             "Also note that {highway=undefined} will return (somewhat surprisingly) 'yes' too - as null-values are considered as true here too!");
 
