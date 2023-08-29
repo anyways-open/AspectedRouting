@@ -146,7 +146,7 @@ namespace AspectedRouting.Language
                     var newlySpecialized = Typs.WidestCommonTypes(specializedTypes, expr.Types);
                     if (!newlySpecialized.Any())
                     {
-                        throw new ArgumentException("Could not find a common ground for types " + specializedTypes.Pretty() + " and " + expr.Types.Pretty());
+                        throw new ArgumentException("Could not find a common ground for types \n\t" + specializedTypes.Pretty() + " and \n\t" + expr.Types.Pretty()+"\n\tDid you perhaps forgot to add the `$` at your function invocation?");
                     }
 
                     specializedTypes = newlySpecialized;
