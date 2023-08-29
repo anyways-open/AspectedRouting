@@ -17,5 +17,8 @@ function unit_test(f, fname, index, expected, parameters, tags)
     elseif (tostring(actual) ~= tostring(expected)) then
         print("[" .. fname .. "] " .. index .. " failed: expected " .. tostring(expected) .. " but got " .. tostring(actual))
         failed_tests = true
+    else
+        print("[" .. fname .. "] " .. index .. " failed (generic fallback): expected " .. tostring(expected) .. " but got " .. tostring(actual))
+        failed_tests = true
     end
 end

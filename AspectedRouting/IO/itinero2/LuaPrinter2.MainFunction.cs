@@ -183,7 +183,7 @@ There is no forward or backward, so this should always be the same for the same 
                 "    local access_backward = " + _skeleton.ToLuaWithTags(_profile.Access).Indent(),
                 "    if(oneway == \"with\") then",
                 "        -- no 'oneway=both' or 'oneway=against', so we can only go forward over this segment",
-                "        -- we overwrite the 'access_forward'-value with no; whatever it was...",
+                "        -- we overwrite the 'access_backward'-value with no; whatever it was...",
                 "        access_backward = \"no\"",
                 "    end",
                 "    if(access_backward ~= nil and access_backward ~= \"no\" and access_backward ~= false) then",
