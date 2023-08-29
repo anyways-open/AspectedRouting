@@ -73,6 +73,22 @@ Access is copied so that `highway=cycleway` and `highway=cycleway;bicycle=design
 
 # Pitfalls
 
-"$all" should not be used together with a mapping: it checks if all _present_ keys return true or yes (or some other value); it does _not_ check that all the specified keys in the mapping are present.
+"$and" (which can be interpreted as an _all_ function) should not be used together with a mapping: it checks if all _present_ keys return true or yes (or some other value); it does _not_ check that all the specified keys in the mapping are present.
 
-For this, an additional 'mustHaveKeys' should be added added 
+For this, an additional 'mustMatch' should be added added .
+
+Typical usage of an `if`-statement is:
+
+```
+{
+ "$ifdotted": {
+   "$mustmatch": {
+      "key":"somevalue",
+      "otherkey": "somevalue"
+   }
+ },
+ "then": <expression>
+ "else": <expression>
+}
+
+```
