@@ -8,7 +8,7 @@ namespace AspectedRouting.Language.Functions
     public class Min : Function
     {
         public override string Description { get; } =
-            "Out of a list of values, gets the smallest value. In case of a list of bools, this acts as `and`. Note that 'null'-values are ignored.";
+            "Out of a list of values, gets the smallest value. In case of a list of bools, this acts as `and`. Note that 'null'-values are ignored. Returns `null` in case of an empty list (or 'no' in case of boolean comparison)";
 
         public override List<string> ArgNames { get; } = new List<string> { "list" };
 
@@ -59,6 +59,9 @@ namespace AspectedRouting.Language.Functions
                 case DoubleType _:
                 case PDoubleType _:
 
+                    if (!ls.Any()) {
+                        return null;
+                    }
 
                     return ls.Select(o =>
                     {
@@ -70,6 +73,9 @@ namespace AspectedRouting.Language.Functions
                         return (double)o;
                     }).Min();
                 default:
+                    if (!ls.Any()) {
+                        return null;
+                    }
                     return ls.Select(o =>
                     {
                         while (o is IExpression e)

@@ -60,9 +60,12 @@ namespace AspectedRouting.IO.md
             }
         }
 
-        private static decimal R(double d)
+        private static string R(double d)
         {
-            return Math.Round((decimal)d, 2);
+            if (Double.IsInfinity(d)) {
+                return "∞";
+            }
+            return ""+ Math.Round((decimal)d, 2);
         }
 
         /**

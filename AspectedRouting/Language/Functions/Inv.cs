@@ -27,7 +27,11 @@ namespace AspectedRouting.Language.Functions
         {
             var arg = arguments[0].Evaluate(c);
             if (IsNumber(arg)) {
-                return 1 / (double)arg;
+                var d = (double)arg;
+                if (d == 0.0) {
+                    return double.PositiveInfinity;
+                }
+                return 1 / d;
             }
 
             throw new Exception("Invalid type: cannot divide by " + arg);

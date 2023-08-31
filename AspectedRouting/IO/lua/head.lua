@@ -1,4 +1,4 @@
-function head(ls)
+ function head(ls)
    if(ls == nil) then
        return nil
    end

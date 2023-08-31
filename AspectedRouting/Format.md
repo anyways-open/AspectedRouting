@@ -69,6 +69,9 @@ Aspects can use the following (extra) tags:
 `speed` is copied in order for the profile to be able to make a `fast` profile (and accessible as `$speed`).
 Access is copied so that `highway=cycleway` and `highway=cycleway;bicycle=designated` will render the same result.
 
+## I still need to access the _original_ value for `access` and `_oneway`
+
+They are copied into `_access` and `_oneway` before any calculations happen.
 
 
 # Pitfalls

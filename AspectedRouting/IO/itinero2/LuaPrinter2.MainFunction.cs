@@ -152,6 +152,8 @@ There is no forward or backward, so this should always be the same for the same 
                 "    local parameters = default_parameters()",
                 _parameterPrinter.DeclareParametersFor(parameters),
                 "",
+                "    tags._oneway = tags.oneway",
+                "    tags._access = tags.access",
                 "    local oneway = " + _skeleton.ToLuaWithTags(_profile.Oneway).Indent(),
                 "    tags.oneway = oneway",
                 "    -- An aspect describing oneway should give either 'both', 'against' or 'width'",

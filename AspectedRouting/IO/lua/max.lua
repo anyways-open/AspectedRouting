@@ -1,5 +1,5 @@
 function max(list)
-    local max
+    local max = nil
     for _, value in pairs(list) do
         if (value ~= nil) then
             if (max == nil) then

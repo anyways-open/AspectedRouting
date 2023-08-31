@@ -42,6 +42,9 @@ namespace AspectedRouting.IO.LuaSkeleton
 
         internal void AddDep(string name)
         {
+            if (dependenciesAreGenerated && !_dependencies.Contains(name)) {
+                throw new InvalidOperationException("You are attempting to add a dependency ('"+name+"') to the lua skeleton, but all the dependencies have been generated already. Make sure you 'addDep' call happens before this");
+            }
             if (name.StartsWith("mapping"))
             {
                 Console.Error.WriteLine(">>>");
@@ -81,8 +84,10 @@ namespace AspectedRouting.IO.LuaSkeleton
             }
         }
 
+        private bool dependenciesAreGenerated = false;
         public List<string> GenerateDependencies()
         {
+            dependenciesAreGenerated = true;
             var imps = new List<string>();
 
             foreach (var name in _dependencies)

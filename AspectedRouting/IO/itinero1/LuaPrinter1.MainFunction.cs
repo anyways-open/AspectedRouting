@@ -38,6 +38,8 @@ namespace AspectedRouting.IO.itinero1
                 "    result.direction = 0",
                 "    result.canstop = true",
                 "    result.attributes_to_keep = {}",
+                "    tags._access = tags.access",
+                "    tags._oneway = tags.oneway",
                 "",
                 "    local access = " + access,
                 "    if (access == nil or access == \"no\" or access == false) then",

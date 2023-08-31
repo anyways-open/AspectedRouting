@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AspectedRouting.IO.itinero1;
@@ -89,14 +90,11 @@ namespace AspectedRouting.IO.itinero2
                     _skeleton.ToLua(new Constant(_profile.VehicleTyps.Select(v => new Constant(v)).ToArray()))
                 };
 
-            var tests = "";
+            LuaTestPrinter testPrinter = null;
             if (_includeTests) {
-                var testPrinter = new LuaTestPrinter(_skeleton,
-                    new List<string> { "unitTestProfile2" });
-                tests = testPrinter.GenerateFullTestSuite(
-                    _behaviourTestSuite.ToList(),
-                    new List<AspectTestSuite>(),
-                    true) + "\n\n" + TestRunner();
+                testPrinter = new LuaTestPrinter(_skeleton,
+                    new List<string> {"unitTest","unitTestProfile2"});
+                
             }
 
             var all = new List<string>
@@ -114,12 +112,30 @@ namespace AspectedRouting.IO.itinero2
                 "",
                 string.Join("\n\n", _skeleton.GenerateFunctions()),
                 "",
-                string.Join("\n\n", _skeleton.GenerateDependencies()), // Should be AFTER generating the main function!
+                string.Join("\n\n", _skeleton.GenerateDependencies()), // Should be AFTER generating the main function so that all dependencies are known!
                 "",
                 string.Join("\n\n", _skeleton.GenerateConstants()),
-                "",
-                tests
+                ""
             };
+
+            if (_includeTests) {
+                
+                var usedFunctions = _profile.AllExpressionsFor(_behaviourName, _context)
+                    .SelectMany(e => e.DirectlyCalled().calledFunctionNames).ToHashSet();
+                var aspectTests = (_aspectTests ?? new List<AspectTestSuite>())
+                    ?.Where(t => usedFunctions.Contains(t?.FunctionToApply?.Name))
+                    ?.Select(ats => ats.WithoutRelationTests())
+                    ?.ToList();
+                Console.WriteLine("Behaviour " + _profile.Name + "." + _behaviourName + " uses functions " +
+                                  string.Join(", ", usedFunctions) + ", found tests for " + aspectTests.Count +
+                                  " of them");
+               
+                var tests = testPrinter?.GenerateFullTestSuite(
+                    _behaviourTestSuite.ToList(),
+                    aspectTests,
+                    true) + "\n\n" + TestRunner();
+                all.Add(tests);
+            }
 
             return all.Lined();
         }

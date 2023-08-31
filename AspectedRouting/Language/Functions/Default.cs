@@ -45,7 +45,6 @@ namespace AspectedRouting.Language.Functions
         public void OverwriteAllDefaultValues(IExpression defaultValue)
         {
 
-            Console.Error.WriteLine("THE DEFAULT FUNCTION HAS BEEN OVERWRITTEN! Be careful with this");
             overwriteDefaultValue = true;
             overwriteDefault = defaultValue;
         }

@@ -388,7 +388,23 @@ namespace AspectedRouting.IO.jsonParser
                 args.Add(allExprs.Single().Value);
             }
 
-            return Funcs.Either(Funcs.Id, Funcs.Dot, func).Apply(args);
+      
+            var either = Funcs.Either(Funcs.Id, Funcs.Dot, func).Apply(args);
+            if (either != null && either.Types.Any()) {
+                return either;
+            }
+
+            // Attempt a rescue: apply the dot differently
+            var lastArg = args.Last();
+            var firstArgs = args.GetRange(0, args.Count - 1);
+            var eitherFixed = Funcs.Either(Funcs.Id, Funcs.Dot, func.Apply(firstArgs)).Apply(lastArg);
+
+            if (eitherFixed == null || !eitherFixed.Types.Any()) {
+                throw new ArgumentException(
+                    $"Could not type function application of \n\t{func.TypeBreakdown()}\nand arguments {string.Join("\n\n\t", args.Select(a => a.TypeBreakdown()))}");
+            }
+
+            return eitherFixed;
         }
 
 
@@ -440,7 +456,7 @@ namespace AspectedRouting.IO.jsonParser
                     f = f.Apply(new[] { neededKeysArg });
                 }
 
-                var appliedDot = new Apply(new Apply(Funcs.Dot, f), fArg);
+                var appliedDot =Funcs.Dot.Apply( f).Apply( fArg);
                 var appliedDirect = new Apply(f, fArg);
 
                 if (!appliedDot.Types.Any())

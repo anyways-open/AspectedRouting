@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using AspectedRouting.IO.itinero1;
 using AspectedRouting.IO.itinero2;
 using AspectedRouting.IO.md;
@@ -20,10 +19,10 @@ namespace AspectedRouting
     {
         private readonly List<(AspectMetadata aspect, AspectTestSuite tests)> _aspects;
         private readonly Context _context;
+        private readonly bool _includeTests;
         private readonly string _outputDirectory;
         private readonly ProfileMetaData _profile;
         private readonly List<BehaviourTestSuite> _profileTests;
-        private readonly bool _includeTests;
 
         public Printer(string outputDirectory, ProfileMetaData profile, Context context,
             List<(AspectMetadata aspect, AspectTestSuite tests)> aspects,
@@ -80,14 +79,14 @@ namespace AspectedRouting
 
             var itinero1ProfileFile = Path.Combine($"{_outputDirectory}/itinero1/" + _profile.Name + ".lua");
             File.WriteAllText(itinero1ProfileFile, luaProfile);
-            Console.WriteLine($"Written {new FileInfo(itinero1ProfileFile).FullName}");
+            Console.WriteLine($"Written {new FileInfo(itinero1ProfileFile).FullName}" + (_includeTests
+                ? " with " + _profileTests.Count + " profile tests and  " + aspectTests.Count + " aspect tests"
+                : ""));
         }
 
         public void WriteAllProfile2()
         {
-            foreach (var (behaviourName,_) in _profile.Behaviours) {
-                WriteProfile2(behaviourName);
-            }
+            foreach (var (behaviourName, _) in _profile.Behaviours) WriteProfile2(behaviourName);
         }
 
         public void WriteProfile2(string behaviourName)
@@ -108,22 +107,18 @@ namespace AspectedRouting
                 itinero2ProfileFile,
                 lua2behaviour);
             Console.WriteLine($"Written {new FileInfo(itinero2ProfileFile).FullName}");
-
-
         }
 
         public void PrintMdInfo()
         {
-            
             /*
              * As a total hack:
              * the 'default value' is set to null for _all_ default functions.
              * When the profile documentation thus default to `no` for an access tag, it'll default to nothing instead, thus making it clear that no change is made
              */
             Funcs.Default.OverwriteAllDefaultValues(new Constant("_no effect_"));
-            
-            
-            
+
+
             var profileMd = new MarkDownSection();
             profileMd.AddTitle(_profile.Name, 1);
 
@@ -155,9 +150,8 @@ namespace AspectedRouting
             File.WriteAllText(
                 $"{_outputDirectory}/profile-documentation/{_profile.Name}.md",
                 profileMd.ToString());
-            
-            Funcs.Default.ResetDefaultValue();
 
+            Funcs.Default.ResetDefaultValue();
         }
     }
 }
