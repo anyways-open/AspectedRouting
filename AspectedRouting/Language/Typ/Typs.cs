@@ -508,6 +508,10 @@ namespace AspectedRouting.Language.Typ
                 }
                 foreach (var kv in dict)
                 {
+                    if ( kv.Value is Var && kv.Key.Equals(((Var) kv.Value).Name)) {
+                        // THis is a substitution which doesn't do anything
+                        continue;
+                    }
                     if (subsTable.TryGetValue(kv.Key, out var t))
                     {
                         // We have seen this variable-type-name before... We should check if it matches
@@ -519,7 +523,7 @@ namespace AspectedRouting.Language.Typ
                         }
 
                         // Bruh, we have a problem!!!
-                        throw new Exception(t + " != " + kv.Value);
+                        throw new Exception("Merging dictionaries failed: attempting to bind "+kv.Key+";"+t + " != " + kv.Value);
                     }
 
                     if (kv.Value is Var v)
