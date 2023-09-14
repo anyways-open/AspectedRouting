@@ -24,7 +24,7 @@ a list of profiles containing the actual parameter value for that profile.
 
 There are two possibilities in order to calculate the possible direction of a traveller can go over an edge:
 
-1) This can be indicated explicitely with the 'oneway'-field. If this expression returns `both`, the edge is traversable in two directions. If it is either `with` or `against`, then it is not
+1) This can be indicated explicitly with the 'oneway'-field. If this expression returns `both`, the edge is traversable in two directions. If it is either `with` or `against`, then it is not
 2) This can be indicated with having a speed or factor which is equal to (or smaller then) 0, in conjunction with a `_direction=with` or `_direction=against` tag. Bicycle lanes are an excellent example for this: a `cycleway:right=yes; cycleway:left=no`, the speed and factor for `_direction=with` could be far greater then for `_direction=against`
 
 Note that `_direction=with` and `_direction=against` are _not_ supported in Itinero1.0 profiles. For maximal compatibility and programming comfort, a mixture of both techniques should be used. For example, one aspect interpreting the legal onewayness in tandem with one aspect determining comfort by direction is optimal.
@@ -35,7 +35,7 @@ Note that `_direction=with` and `_direction=against` are _not_ supported in Itin
 
 Obstacles are objects which are encountered on nodes, e.g. bollards, traffic lights but also turn restrictions.
 
-The first property for this is `obstacleaccess` which calculates wether or not a vehicle can pass the obstacle.
+The first property for this is `obstacleaccess` which calculates whether or not a vehicle can pass the obstacle.
 The possible values are:
 
 - "no" of "false": the current vehicle _cannot_ pass this obstacle and should take a different route
@@ -54,7 +54,7 @@ If the resulting cost is null, the default implementation will be used.
 - `$funcName` indicates a builtin function
 - `#parameter` indicates a configurable parameter
 
-A profile is a function which maps a set of tags onto a value. It is basically Haskell, except that functions can have _multiple_ types. During typechecking, some types will turn out not to be possible and they will dissappear, potentially fixing the implementation of the function itself.
+A profile is a function which maps a set of tags onto a value. It is basically Haskell, except that functions can have _multiple_ types. During typechecking, some types will turn out not to be possible and they will disappear, potentially fixing the implementation of the function itself.
 
 # Injected tags
 
