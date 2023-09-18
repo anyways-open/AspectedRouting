@@ -282,9 +282,7 @@ namespace AspectedRouting
             foreach (var (profile, profileTests) in profiles)
             foreach (var test in profileTests)
                 testsOk &= test.Run(context);
-            if (testsOk) {
-                WriteOutputFiles(context, aspects, outputDir, profiles, includeTests);
-            }
+            WriteOutputFiles(context, aspects, outputDir, profiles, includeTests);
 
             return (testsOk, profiles.Select(p => p.profile).ToList());
         }

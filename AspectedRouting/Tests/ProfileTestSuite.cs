@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using AspectedRouting.Language;
 using AspectedRouting.Language.Expression;
@@ -138,16 +139,17 @@ namespace AspectedRouting.Tests
         }
 
 
-        public bool RunTest(Context c, int i, ProfileResult expected, Dictionary<string, string> tags)
+        public bool RunTest(Context c, int i, ProfileResult expected, Dictionary<string, string> tags, List<string> actualValues)
         {
+            var tag = $"[{Profile.Name}.{BehaviourName} (behaviour)]";
             void Err(string message, object exp, object act, string extra = "")
             {
                 Console.WriteLine(
-                    $"[{Profile.Name}.{BehaviourName}]: Test on line {i + 1} failed: {message}: expected {exp} but got {act};\n{extra}\n    {{{tags.Pretty()}}}");
+                    $"{tag}: Test on line {i + 1} failed: {message}: expected {exp} but got {act};\n{extra}\n    {{{tags.Pretty()}}}");
             }
 
             var actual = Profile.Run(c, BehaviourName, tags);
-
+            actualValues.Add(actual.Access+","+actual.Oneway+","+actual.Speed+","+actual.Priority);
             var success = true;
             if (!expected.Access.Equals(actual.Access))
             {
@@ -206,11 +208,12 @@ namespace AspectedRouting.Tests
         {
             var allOk = true;
             var i = 1;
+            var actual = new List<string>();
             foreach (var (expected, tags) in Tests)
             {
                 try
                 {
-                    allOk &= RunTest(c, i, expected, tags);
+                    allOk &= RunTest(c, i, expected, tags, actual);
                 }
                 catch (Exception e)
                 {
@@ -218,6 +221,10 @@ namespace AspectedRouting.Tests
                 }
 
                 i++;
+            }
+
+            if (!allOk) {
+                File.WriteAllLines(this.Profile.Name+"."+this.BehaviourName+".behaviour_test.actual.csv", actual);
             }
 
             Console.WriteLine($"[{Profile.Name}] {Tests.Count()} tests " + (allOk ? "successfull" : "executed, some failed") +
